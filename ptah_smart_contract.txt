@@ -1,0 +1,243 @@
+/**
+ * @title PtahSmartContract
+ * @dev ContractDescription
+ */
+
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity ^0.8.0;
+
+// Enumération des rôles pour le contrôle d'accès
+enum Role { Admin, Doctor, Porter }
+
+// Structure pour un Patient (anonymisé)
+struct Patient {
+    uint id;
+    string name;
+    uint dateOfBirth;
+    // ... autres attributs si nécessaire ...
+}
+
+// Structure pour une unité hospitalière
+struct Unit {
+    string unitCode;  // Code unique de l'unité
+    string unitLabel; // Nom de l'unité
+    string building;  // Bâtiment de l'unité
+    // ... autres attributs si nécessaire ...
+}
+
+// Structure pour une demande de transport
+struct TransportRequest {
+    uint id;                  // Identifiant unique de la demande
+    uint patientId;           // ID du patient concerné
+    string departureUnitCode; // Code de l'unité de départ
+    string arrivalUnitCode;   // Code de l'unité d'arrivée
+    uint startTime;           // Heure de début du transport
+    uint endTime;             // Heure de fin prévue
+    string status;            // Statut de la demande
+    address assignedBy;       // Adresse de la personne ayant créé la demande
+    address assignee;         // Adresse du brancardier assigné
+    // ... autres attributs si nécessaire ...
+}
+
+// Structure pour enregistrer les actions effectuées
+struct ActionLog {
+    uint timestamp;  // Horodatage de l'action
+    string action;   // Description de l'action
+    address user;    // Utilisateur ayant effectué l'action
+}
+
+
+// Contrat principal de gestion des transports
+contract TransportManager {
+    // Définitions des mappings et des tableaux pour stocker les données
+    mapping(address => Role) private roles;
+    mapping(uint => Patient) private patients;
+    uint[] private patientIds; // Added array to keep track of patient IDs
+    mapping(string => Unit) private units;
+    string[] private unitCodes; // Added array to keep track of unit codes
+    mapping(uint => TransportRequest) public transportRequests;
+    uint[] private requestIds; // Added array to keep track of transport request IDs
+    ActionLog[] private actionLogs;
+    address[] private roleAddresses;
+
+    uint private nextPatientId = 1;
+    uint private nextRequestId = 1;
+
+    // Définition des événements pour le suivi des actions
+    event TransportRequestAdded(uint requestId);
+    event TransportRequestUpdated(uint requestId, string status);
+    event TransportRequestDeleted(uint requestId);
+    event RoleAssigned(address userAddress, Role role);
+
+    // Modificateurs pour restreindre l'accès aux fonctions
+    modifier onlyAdmin() {
+        require(roles[msg.sender] == Role.Admin, "This function is restricted to the admin");
+        _;
+    }
+
+    modifier onlyDoctor() {
+        require(roles[msg.sender] == Role.Doctor, "This function is restricted to doctors");
+        _;
+    }
+
+    modifier onlyPorter() {
+        require(roles[msg.sender] == Role.Porter, "This function is restricted to porters");
+        _;
+    }
+
+    // Modifier to check if the caller is the one who assigned the task
+    modifier isTaskOwner(uint requestId) {
+        require(transportRequests[requestId].assignedBy == msg.sender, "Caller is not the task owner");
+        _;
+    }
+
+    modifier isTaskExecutor(uint requestId) {
+        require(transportRequests[requestId].assignee == msg.sender, "Caller is not the task executor");
+        _;
+    }
+
+    // Constructeur pour initialiser le contrat avec l'administrateur
+    constructor() {
+        roles[msg.sender] = Role.Admin; // Assign the contract deployer the Admin role
+        roleAddresses.push(msg.sender); // Add the deployer's address to roleAddresses
+    }
+
+    //----//----// GESTION DES RÔLES
+
+    // Fonction pour ajouter une entrée au journal des actions
+    function assignRole(address userAddress, Role role) public onlyAdmin {
+        require(userAddress != address(0), "Invalid address");
+        if (roles[userAddress] == Role(0) && role != Role(0)) {
+            roleAddresses.push(userAddress);
+        }
+        roles[userAddress] = role;
+        emit RoleAssigned(userAddress, role);
+    }
+
+    // Fonction pour récupérer les rôles
+    function getRoles() public view returns (address[] memory, Role[] memory) {
+        address[] memory addresses = new address[](roleAddresses.length);
+        Role[] memory assignedRoles = new Role[](roleAddresses.length);
+
+        for (uint i = 0; i < roleAddresses.length; i++) {
+            addresses[i] = roleAddresses[i];
+            assignedRoles[i] = roles[roleAddresses[i]];
+        }
+        return (addresses, assignedRoles);
+    }
+
+    //----//----// GESTION DES LOGS D'ACTIONS
+
+    // Fonction pour ajouter une entrée au journal des actions
+    function addActionLog(string memory action) private {
+        actionLogs.push(ActionLog({
+            timestamp: block.timestamp,
+            action: action,
+            user: msg.sender
+        }));
+    }
+    
+    // Fonction pour récupérer les logs d'actions
+    function getActionLogs() public view returns (ActionLog[] memory) {
+        return actionLogs;
+    }
+
+    //----//----// GESTION DES PATIENTS
+
+    // Ajoute un nouveau patient et son ID au tableau patientIds
+    function addPatient(string memory name, uint dateOfBirth) public onlyDoctor {
+        uint patientId = nextPatientId++;
+        patients[patientId] = Patient(patientId, name, dateOfBirth);
+        patientIds.push(patientId); // Ajoutez l'ID du patient au tableau pour le suivi
+        addActionLog("Added patient");
+    }
+
+    // Récupère les détails de tous les patients
+    function getAllPatients() public view returns (Patient[] memory) {
+        Patient[] memory allPatients = new Patient[](patientIds.length);
+        for (uint i = 0; i < patientIds.length; i++) {
+            allPatients[i] = patients[patientIds[i]];
+        }
+        return allPatients;
+    }
+
+    //----//----// GESTION DES UNITES
+
+    // Ajoute une nouvelle unité hospitalière
+    function addUnit(string memory unitCode, string memory unitLabel, string memory building) public {
+        units[unitCode] = Unit(unitCode, unitLabel, building);
+        unitCodes.push(unitCode); // Ajoute le code de l'unité au tableau
+        addActionLog("Added unit");
+    }
+
+    // Récupère les détails de toutes les unités
+    function getAllUnits() public view returns (Unit[] memory) {
+        Unit[] memory allUnits = new Unit[](unitCodes.length);
+        for (uint i = 0; i < unitCodes.length; i++) {
+            allUnits[i] = units[unitCodes[i]];
+        }
+        return allUnits;
+    }
+
+    //----//----// GESTION DES DEMANDES DE TRANSPORTS
+
+    // Ajoute une nouvelle demande de transport
+    function addTransportRequest(
+        uint patientId,
+        string memory departureUnitCode,
+        string memory arrivalUnitCode,
+        uint startTime,
+        uint endTime,
+        string memory status,
+        address assignee
+    ) public onlyDoctor {
+        // Ensure the patient exists
+        require(patients[patientId].id != 0, "Patient does not exist.");
+        // Ensure the units exist
+        require(
+            bytes(units[departureUnitCode].unitCode).length != 0 &&
+            bytes(units[arrivalUnitCode].unitCode).length != 0,
+            "Departure or arrival unit does not exist."
+        );
+        // Ensure the assignee is a porter
+        require(roles[assignee] == Role.Porter, "Assignee must be a porter");
+
+        // Create the transport request
+        transportRequests[nextRequestId] = TransportRequest({
+            id: nextRequestId,
+            patientId: patientId,
+            departureUnitCode: departureUnitCode,
+            arrivalUnitCode: arrivalUnitCode,
+            startTime: startTime,
+            endTime: endTime,
+            status: status,
+            assignedBy: msg.sender,
+            assignee: assignee
+        });
+
+        // Log the action and emit the event
+        addActionLog("Added transport request");
+        emit TransportRequestAdded(nextRequestId);
+
+        // Increment requestId for the next addition
+        nextRequestId++;
+    }
+
+    // Met à jour l'état d'une demande de transport
+    function updateTransportRequest(uint requestId, string memory status) public onlyPorter {
+        require(transportRequests[requestId].assignee == msg.sender, "Caller is not the assignee of the request");
+        transportRequests[requestId].status = status;
+        addActionLog("Updated transport request");
+        emit TransportRequestUpdated(requestId, status);
+    }
+
+    // Supprime une demande de transport
+    function deleteTransportRequest(uint requestId) public onlyDoctor {
+        require(transportRequests[requestId].assignedBy == msg.sender, "Caller is not the assigner of the request");
+        delete transportRequests[requestId];
+        addActionLog("Deleted transport request");
+        emit TransportRequestDeleted(requestId);
+    }
+
+    // ... autres fonctions pour la gestion des patients, des unités et des demandes de transport ...
+}
