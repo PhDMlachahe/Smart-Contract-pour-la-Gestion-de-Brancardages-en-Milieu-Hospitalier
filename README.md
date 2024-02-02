@@ -38,4 +38,4 @@ Le smart contract `TransportManager` intègre plusieurs composantes essentielles
 
 ## 📘 Pour Aller Plus Loin
 
-Nous invitons les parties intéressées à approfondir leur compréhension des enjeux et des solutions proposées par notre projet. La documentation complète, incluant l'architecture détaillée du smart contract et les cas d'usage envisagés, est disponible pour consultation.
+Nous invitons les parties intéressées à approfondir leur compréhension des enjeux et des solutions proposées par notre projet, en jetant un coup d'oeil à notre documentation complète sous forme de PowerPoint.
