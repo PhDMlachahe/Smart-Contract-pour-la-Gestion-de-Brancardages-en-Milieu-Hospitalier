@@ -29,7 +29,7 @@ Le smart contract `TransportManager` utilise plusieurs structures (structs) pour
 Le smart contract `TransportManager` intègre plusieurs composantes essentielles pour la gestion des brancardages, permettant à l'utilisateur de bénéficier de plusieurs fonctionnalités :
 
 ### Gestion des Rôles
-- **`assignRole(address userAddress, Role role)`** : Définir des rôles pour différents utilisateurs, en attribuant des rôles spécifiques (Admin, Doctor, Porter). Cela garantit que chaque utilisateur a accès uniquement aux fonctionnalités qui lui sont autorisées, renforçant la sécurité et la conformité du système.
+- **`assignRole(address userAddress, Role role)`** : Définir des rôles pour différents utilisateurs, en attribuant des rôles spécifiques (_Admin_, _Doctor_, _Porter_). Cela garantit que chaque utilisateur a accès uniquement aux fonctionnalités qui lui sont autorisées, renforçant la sécurité et la conformité du système.
 - **`getRoles()`** : Récupérer la liste des adresses et des rôles assignés à chaque utilisateur au sein du système.
 
 ### Gestion des Patients
@@ -51,12 +51,12 @@ Le smart contract `TransportManager` intègre plusieurs composantes essentielles
 
 ## 🛂 Sécurité et Contrôle d'Accès
 
-Votre contrat implémente plusieurs modificateurs (`onlyAdmin`, `onlyDoctor`, `onlyPorter`, `isTaskOwner`, `isTaskExecutor`) pour restreindre l'accès aux fonctions critiques selon le rôle de l'utilisateur, garantissant ainsi que les opérations sont effectuées par les utilisateurs autorisés.
+Notre contrat implémente plusieurs modificateurs (`onlyAdmin`, `onlyDoctor`, `onlyPorter`, `isTaskOwner`, `isTaskExecutor`) pour restreindre l'accès aux fonctions critiques selon le rôle de l'utilisateur, garantissant ainsi que les opérations sont effectuées par les utilisateurs autorisés.
 
 
 ## 🔔 Événements
 
-Des événements (`TransportRequestAdded`, `TransportRequestUpdated`, `TransportRequestDeleted`, `RoleAssigned`) sont émis pour notifier les modifications importantes dans le système, facilitant la réactivité de l'interface utilisateur et l'intégration avec d'autres systèmes.
+Des événements (`TransportRequestAdded`, `TransportRequestUpdated`, `TransportRequestDeleted`, `RoleAssigned`) sont émis pour notifier les modifications importantes dans le système, facilitant la réactivité de l'interface utilisateur.
 
 
 ## 📘 Pour Aller Plus Loin
