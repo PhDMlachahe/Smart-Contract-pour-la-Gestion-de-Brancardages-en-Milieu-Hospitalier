@@ -26,26 +26,27 @@ Le smart contract `TransportManager` utilise plusieurs structures (structs) pour
 
 ## 🔧 Fonctionnalités Clés
 
-Le smart contract `TransportManager` intègre plusieurs composantes essentielles pour la gestion des brancardages :
+Le smart contract `TransportManager` intègre plusieurs composantes essentielles pour la gestion des brancardages, permettant à l'utilisateur de bénéficier de plusieurs fonctionnalités :
 
 ### Gestion des Rôles
-- **`assignRole(address userAddress, Role role)`** : Cette fonction permet à l'administrateur du contrat de définir des rôles pour différents utilisateurs, en attribuant des rôles spécifiques (Admin, Doctor, Porter). Cela garantit que chaque utilisateur a accès uniquement aux fonctionnalités qui lui sont autorisées, renforçant la sécurité et la conformité du système.
+- **`assignRole(address userAddress, Role role)`** : Définir des rôles pour différents utilisateurs, en attribuant des rôles spécifiques (Admin, Doctor, Porter). Cela garantit que chaque utilisateur a accès uniquement aux fonctionnalités qui lui sont autorisées, renforçant la sécurité et la conformité du système.
+- **`getRoles()`** : Récupérer la liste des adresses et des rôles assignés à chaque utilisateur au sein du système.
 
 ### Gestion des Patients
-- **`addPatient(string name, uint dateOfBirth)`** : Fonction réservée aux médecins, elle permet d'ajouter un nouveau patient au système. Chaque patient est ajouté avec un identifiant unique, son nom, et sa date de naissance, assurant une gestion précise et sécurisée des données patient.
-- **`getAllPatients()`** : Cette fonction permet de récupérer les détails de tous les patients enregistrés dans le système, offrant aux utilisateurs autorisés une vue d'ensemble des patients pour faciliter la gestion et la coordination des soins.
+- **`addPatient(string name, uint dateOfBirth)`** : Permettre aux médecins d'ajouter un nouveau patient au système. Chaque patient est ajouté avec un identifiant unique, son nom, et sa date de naissance, assurant une gestion précise et sécurisée des données patient.
+- **`getAllPatients()`** : Récupérer les détails de tous les patients enregistrés dans le système, offrant aux utilisateurs autorisés une vue d'ensemble des patients pour faciliter la gestion et la coordination des soins.
 
 ### Gestion des Unités Hospitalières
-- **`addUnit(string unitCode, string unitLabel, string building)`** : Permet d'ajouter une nouvelle unité hospitalière au système, en spécifiant un code d'unité unique, un label et le bâtiment correspondant. Cette fonction est cruciale pour structurer l'organisation des transports au sein des différentes unités de l'hôpital.
-- **`getAllUnits()`** : Récupère les informations de toutes les unités hospitalières enregistrées, facilitant ainsi la planification et la coordination des demandes de transport entre différentes unités.
+- **`addUnit(string unitCode, string unitLabel, string building)`** : Ajouter une nouvelle unité hospitalière au système, en spécifiant un code d'unité unique, un label et le bâtiment correspondant. Cette fonction est cruciale pour structurer l'organisation des transports au sein des différentes unités de l'hôpital.
+- **`getAllUnits()`** : Récupèrer les informations de toutes les unités hospitalières enregistrées, facilitant ainsi la planification et la coordination des demandes de transport entre différentes unités.
 
 ### Gestion des Demandes de Transport
-- **`addTransportRequest(...)`** : Permet aux médecins de créer une nouvelle demande de transport pour un patient, en spécifiant les unités de départ et d'arrivée, ainsi que les heures de début et de fin prévues. Chaque demande est enregistrée avec un identifiant unique et des détails précis pour une traçabilité et une gestion optimales.
-- **`updateTransportRequest(uint requestId, string status)`** : Les brancardiers peuvent mettre à jour le statut d'une demande de transport (par exemple, de "en attente" à "complété"), assurant ainsi un suivi en temps réel du processus de transport.
-- **`deleteTransportRequest(uint requestId)`** : Cette fonction, accessible uniquement par les médecins, permet de supprimer une demande de transport. Cela peut être nécessaire en cas d'annulation ou de modification des besoins de transport du patient.
+- **`addTransportRequest(uint patientId, string memory departureUnitCode, ..., string memory status, address assignee)`** : Permettre aux médecins de créer une nouvelle demande de transport pour un patient, en spécifiant les unités de départ et d'arrivée, les heures de début et de fin prévues, ainsi que le brancardier en charge du transport. Chaque demande est enregistrée avec un identifiant unique et des détails précis pour une traçabilité et une gestion optimales.
+- **`updateTransportRequest(uint requestId, string status)`** : Permettre aux brancardiers de mettre à jour le statut d'une demande de transport (par exemple, de "en attente" à "complété"), assurant ainsi un suivi en temps réel du processus de transport.
+- **`deleteTransportRequest(uint requestId)`** : Permettre aux médecins de supprimer une demande de transport. Cela peut être nécessaire en cas d'annulation ou de modification des besoins de transport du patient.
 
 ### Logs d'Actions
-- **`getActionLogs()`** : Permet de récupérer un historique complet des actions effectuées au sein du contrat, y compris l'ajout de patients, la création, mise à jour, et suppression de demandes de transport. Cette fonctionnalité est essentielle pour l'audit et la traçabilité, offrant une transparence totale des opérations réalisées.
+- **`getActionLogs()`** : Récupérer un historique complet des actions effectuées au sein du contrat, y compris l'ajout de patients, la création, mise à jour, et suppression de demandes de transport. Cette fonctionnalité est essentielle pour l'audit et la traçabilité, offrant une transparence totale des opérations réalisées.
 
 
 ## 🛂 Sécurité et Contrôle d'Accès
