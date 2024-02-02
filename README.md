@@ -1,4 +1,4 @@
-# Projet de Smart Contract pour la Gestion de Brancardages en Milieu Hospitalier
+# Smart Contract pour la Gestion de Brancardages en Milieu Hospitalier
 
 Ce projet innovant utilise la technologie blockchain pour adresser une problématique cruciale dans la gestion des données de santé : l'accès abusif aux données sensibles. En exploitant la robustesse des smart contracts Ethereum, notre solution vise à améliorer la gestion des brancardages en milieu hospitalier, tout en garantissant une protection renforcée des données des patients contre les accès non autorisés.
 
@@ -6,7 +6,7 @@ Ce projet innovant utilise la technologie blockchain pour adresser une probléma
 
 Dans le secteur hospitalier, la gestion des données patients est au cœur des préoccupations, notamment avec le système d'ORBIS pour lequel les informations sensibles doivent être scrupuleusement protégées. Notre projet prend racine dans l'observation directe de l'utilisation inappropriée des données personnelles des patients, comme observé lors d'un stage au CHU Henri Mondor, révélant la nécessité d'un renforcement de la sécurité des données. 
 
-**Problématique :** Le logiciel PTAH, étroitement lié à ORBIS, soulève des défis similaires en termes de sécurisation des données, car il est susceptible d'être utilisé pour accéder de manière abusive aux informations des patients. Ce constat est particulièrement alarmant et exige une solution capable d'endiguer ces pratiques tout en assurant une gestion fluide des processus hospitaliers. Pour plus de détails sur le PTAH et les enjeux liés, consultez [cet article](https://medium.com/wanabilini/%EF%B8%8F-%EF%B8%8F-coup-doeil-rapide-sur-le-logiciel-ptah-afbc6fe0ab64).
+**Problématique :** Le logiciel PTAH, étroitement lié à ORBIS, soulève des défis similaires en termes de sécurisation des données, car il est susceptible d'être utilisé pour accéder de manière abusive aux informations des patients. Ce constat est particulièrement alarmant et exige une solution capable d'endiguer ces pratiques tout en assurant une gestion fluide des processus hospitaliers. Pour plus de détails sur le fonctionnement du PTAH, consultez [cet article](https://medium.com/wanabilini/%EF%B8%8F-%EF%B8%8F-coup-doeil-rapide-sur-le-logiciel-ptah-afbc6fe0ab64).
 
 ## 🎯 Objectifs du Projet
 
